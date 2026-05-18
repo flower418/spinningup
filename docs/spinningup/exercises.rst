@@ -15,13 +15,13 @@ Problem Set 1: Basics of Implementation
 
     * PyTorch version: ``spinup/exercises/pytorch/problem_set_1/exercise1_1.py``
     
-    * Tensorflow version: ``spinup/exercises/tf1/problem_set_1/exercise1_1.py``
+
 
     **Path to Solution:** 
 
     * PyTorch version: ``spinup/exercises/pytorch/problem_set_1_solutions/exercise1_1_soln.py``
 
-    * Tensorflow version: ``spinup/exercises/tf1/problem_set_1_solutions/exercise1_1_soln.py``
+
 
 
     **Instructions.** Write a function that takes in the means and log stds of a batch of diagonal Gaussian distributions, along with (previously-generated) samples from those distributions, and returns the log likelihoods of those samples. (In the Tensorflow version, you will write a function that creates computation graph operations to do this; in the PyTorch version, you will directly operate on given Tensors.)
@@ -41,13 +41,13 @@ Problem Set 1: Basics of Implementation
 
     * PyTorch version: ``spinup/exercises/pytorch/problem_set_1/exercise1_2.py``
     
-    * Tensorflow version: ``spinup/exercises/tf1/problem_set_1/exercise1_2.py``
+
 
     **Path to Solution:** 
 
     * PyTorch version: ``spinup/exercises/pytorch/problem_set_1_solutions/exercise1_2_soln.py``
 
-    * Tensorflow version: ``spinup/exercises/tf1/problem_set_1_solutions/exercise1_2_soln.py``
+
 
     **Instructions.** Implement an MLP diagonal Gaussian policy for PPO. 
 
@@ -62,13 +62,13 @@ Problem Set 1: Basics of Implementation
 
     * PyTorch version: ``spinup/exercises/pytorch/problem_set_1/exercise1_3.py``
     
-    * Tensorflow version: ``spinup/exercises/tf1/problem_set_1/exercise1_3.py``
+
 
     **Path to Solution.** 
 
     * PyTorch version: ``spinup/algos/pytorch/td3/td3.py``
 
-    * Tensorflow version: ``spinup/algos/tf1/td3/td3.py``
+
 
     **Instructions.** Implement the main mathematical logic for the TD3 algorithm.
 
@@ -112,7 +112,7 @@ Problem Set 2: Algorithm Failure Modes
 
     * PyTorch version: ``spinup/exercises/pytorch/problem_set_2/exercise2_2.py``
     
-    * Tensorflow version: ``spinup/exercises/tf1/problem_set_2/exercise2_2.py``
+
 
     **Path to Solution.** `Solution available here. <../spinningup/exercise2_2_soln.html>`_
 
@@ -131,11 +131,11 @@ Problem Set 2: Algorithm Failure Modes
     .. code-block:: python
 
         # Bellman backup for Q function
-        backup = tf.stop_gradient(r_ph + gamma*(1-d_ph)*q_pi_targ)
+        q_pi = (q1_pi + q2_pi).min()
 
         # DDPG losses
-        pi_loss = -tf.reduce_mean(q_pi)
-        q_loss = tf.reduce_mean((q-backup)**2)
+        pi_loss = -(q_pi.mean())
+        q_loss = ((q - backup)**2).mean()
 
     How could a bug in the actor-critic code have an impact here?
 

@@ -239,9 +239,7 @@ Pseudocode
 Documentation
 =============
 
-.. admonition:: You Should Know
-
-    In what follows, we give documentation for the PyTorch and Tensorflow implementations of SAC in Spinning Up. They have nearly identical function calls and docstrings, except for details relating to model construction. However, we include both full docstrings for completeness.
+Below is the documentation for the PyTorch implementation.
 
 
 
@@ -262,37 +260,6 @@ You can get actions from this model with
     actions = ac.act(torch.as_tensor(obs, dtype=torch.float32))
 
 
-Documentation: Tensorflow Version
----------------------------------
-
-.. autofunction:: spinup.sac_tf1
-
-Saved Model Contents: Tensorflow Version
-----------------------------------------
-
-The computation graph saved by the logger includes:
-
-========  ====================================================================
-Key       Value
-========  ====================================================================
-``x``     Tensorflow placeholder for state input.
-``a``     Tensorflow placeholder for action input.
-``mu``    Deterministically computes mean action from the agent, given states in ``x``. 
-``pi``    Samples an action from the agent, conditioned on states in ``x``.
-``q1``    Gives one action-value estimate for states in ``x`` and actions in ``a``.
-``q2``    Gives the other action-value estimate for states in ``x`` and actions in ``a``.
-``v``     Gives the value estimate for states in ``x``. 
-========  ====================================================================
-
-This saved model can be accessed either by
-
-* running the trained policy with the `test_policy.py`_ tool,
-* or loading the whole saved graph into a program with `restore_tf_graph`_. 
-
-Note: for SAC, the correct evaluation policy is given by ``mu`` and not by ``pi``. The policy ``pi`` may be thought of as the exploration policy, while ``mu`` is the exploitation policy.
-
-.. _`test_policy.py`: ../user/saving_and_loading.html#loading-and-running-trained-policies
-.. _`restore_tf_graph`: ../utils/logger.html#spinup.utils.logx.restore_tf_graph
 
 
 References

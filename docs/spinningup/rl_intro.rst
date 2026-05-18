@@ -164,7 +164,7 @@ In what follows, we'll describe how to do these for both categorical and diagona
 
     A categorical policy is like a classifier over discrete actions. You build the neural network for a categorical policy the same way you would for a classifier: the input is the observation, followed by some number of layers (possibly convolutional or densely-connected, depending on the kind of input), and then you have one final linear layer that gives you logits for each action, followed by a `softmax`_ to convert the logits into probabilities. 
 
-    **Sampling.** Given the probabilities for each action, frameworks like PyTorch and Tensorflow have built-in tools for sampling. For example, see the documentation for `Categorical distributions in PyTorch`_, `torch.multinomial`_, `tf.distributions.Categorical`_, or `tf.multinomial`_.
+    **Sampling.** Given the probabilities for each action, frameworks like PyTorch have built-in tools for sampling. For example, see the documentation for `Categorical distributions in PyTorch`_ and `torch.multinomial`_.
 
     **Log-Likelihood.** Denote the last layer of probabilities as :math:`P_{\theta}(s)`. It is a vector with however many entries as there are actions, so we can treat the actions as indices for the vector. The log likelihood for an action :math:`a` can then be obtained by indexing into the vector:
 
@@ -191,7 +191,6 @@ In what follows, we'll describe how to do these for both categorical and diagona
 
         a = \mu_{\theta}(s) + \sigma_{\theta}(s) \odot z,
 
-    where :math:`\odot` denotes the elementwise product of two vectors. Standard frameworks have built-in ways to generate the noise vectors, such as `torch.normal`_ or `tf.random_normal`_. Alternatively, you can build distribution objects, eg through `torch.distributions.Normal`_ or `tf.distributions.Normal`_, and use them to generate samples. (The advantage of the latter approach is that those objects can also calculate log-likelihoods for you.)
 
     **Log-Likelihood.** The log-likelihood of a :math:`k` -dimensional action :math:`a`, for a diagonal Gaussian with mean :math:`\mu = \mu_{\theta}(s)` and standard deviation :math:`\sigma = \sigma_{\theta}(s)`, is given by
 
@@ -206,12 +205,8 @@ In what follows, we'll describe how to do these for both categorical and diagona
 .. _`softmax`: https://developers.google.com/machine-learning/crash-course/multi-class-neural-networks/softmax
 .. _`Categorical distributions in PyTorch`: https://pytorch.org/docs/stable/distributions.html#categorical
 .. _`torch.multinomial`: https://pytorch.org/docs/stable/torch.html#torch.multinomial
-.. _`tf.distributions.Categorical`: https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/distributions/Categorical
-.. _`tf.multinomial`: https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/random/multinomial
 .. _`torch.normal`: https://pytorch.org/docs/stable/torch.html#torch.normal
-.. _`tf.random_normal`: https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/random/normal
 .. _`torch.distributions.Normal`: https://pytorch.org/docs/stable/distributions.html#normal
-.. _`tf.distributions.Normal`: https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/distributions/Normal
 
 Trajectories
 ------------

@@ -24,7 +24,7 @@ eg:
 
 .. parsed-literal::
 
-    python -m spinup.run ppo --env Walker2d-v4 --exp_name walker
+    python -m spinup.run ppo --env Walker2d-v5 --exp_name walker
 
 .. _`experiment outputs`: ../user/saving_and_loading.html
 .. _`plotting`: ../user/plotting.html
@@ -37,11 +37,11 @@ eg:
 
     .. parsed-literal::
 
-        python -m spinup.run ppo --exp_name ppo_ant --env Ant-v4 --clip_ratio 0.1 0.2
+        python -m spinup.run ppo --exp_name ppo_ant --env Ant-v5 --clip_ratio 0.1 0.2
             --hid[h] [32,32] [64,32] --act torch.nn.Tanh --seed 0 10 20 --dt
             --data_dir path/to/data
 
-    runs PPO in the ``Ant-v4`` Gymnasium environment, with various settings controlled by the flags.
+    runs PPO in the ``Ant-v5`` Gymnasium environment, with various settings controlled by the flags.
 
     ``clip_ratio``, ``hid``, and ``act`` are flags to set some algorithm hyperparameters. You can provide multiple values for hyperparameters to run multiple experiments. Check the docs to see what hyperparameters you can set (click here for the `PPO documentation`_).
 
@@ -80,7 +80,7 @@ to see a readout of the docstring.
 
     .. parsed-literal::
 
-        python -m spinup.run ppo --env Walker2d-v4 --exp_name walker --act torch.nn.ELU
+        python -m spinup.run ppo --env Walker2d-v5 --exp_name walker --act torch.nn.ELU
 
     sets ``torch.nn.ELU`` as the activation function.
 
@@ -109,7 +109,7 @@ For example, to launch otherwise-equivalent runs with different random seeds (0,
 
 .. parsed-literal::
 
-    python -m spinup.run ppo --env Walker2d-v4 --exp_name walker --seed 0 10 20
+    python -m spinup.run ppo --env Walker2d-v5 --exp_name walker --seed 0 10 20
 
 Experiments don't launch in parallel because they soak up enough resources that executing several at the same time wouldn't get a speedup.
 
@@ -192,7 +192,7 @@ For example, consider:
 
 .. parsed-literal::
 
-    python -m spinup.run ddpg --env Hopper-v4 --hid[h] [300] [128,128] --act torch.nn.Tanh torch.nn.ReLU
+    python -m spinup.run ddpg --env Hopper-v5 --hid[h] [300] [128,128] --act torch.nn.Tanh torch.nn.ReLU
 
 Here, the ``--hid`` flag is given a **user-supplied shorthand**, ``h``. The ``--act`` flag is not given a shorthand by the user, so one will be constructed for it automatically.
 

@@ -117,16 +117,16 @@ Verify MuJoCo works:
 .. parsed-literal::
 
     python -c "import mujoco; print(mujoco.__version__)"
-    python -c "import gymnasium; gymnasium.make('HalfCheetah-v4')"
+    python -c "import gymnasium; gymnasium.make('HalfCheetah-v5')"
 
 Then test by training PPO on a MuJoCo environment:
 
 .. parsed-literal::
 
-    python -m spinup.run ppo --hid "[64,64]" --env HalfCheetah-v4 --exp_name mujocotest
+    python -m spinup.run ppo --hid "[64,64]" --env HalfCheetah-v5 --exp_name mujocotest
 
 .. note::
 
-    MuJoCo environments in Gymnasium use version **v4** or **v5**. The old v2 environments require the deprecated ``mujoco-py`` package and are not supported.
+    MuJoCo environments in Gymnasium use version **v5**. The old v2/v3/v4 environments require the deprecated ``mujoco-py`` package and are not supported.
 
-    Available MuJoCo environments: ``Ant-v4``, ``HalfCheetah-v4``, ``Hopper-v4``, ``Walker2d-v4``, ``Swimmer-v4``, ``Humanoid-v4``, ``HumanoidStandup-v4``, ``Pusher-v4``, ``Reacher-v4``, ``InvertedPendulum-v4``, ``InvertedDoublePendulum-v4``.
+    Available MuJoCo environments: ``Ant-v5``, ``HalfCheetah-v5``, ``Hopper-v5``, ``Walker2d-v5``, ``Swimmer-v5``, ``Humanoid-v5``, ``HumanoidStandup-v5``, ``Pusher-v5``, ``Reacher-v5``, ``InvertedPendulum-v5``, ``InvertedDoublePendulum-v5``.

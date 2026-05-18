@@ -189,7 +189,7 @@ References
 .. _`reparameterization trick`: https://arxiv.org/abs/1312.6114
 .. [27] `Auto-Encoding Variational Bayes <https://arxiv.org/abs/1312.6114>`_, Kingma and Welling, 2013 (Reparameterization trick)
 
-.. _`Tensorflow`: https://www.tensorflow.org/
+
 .. [28] `Tensorflow`_
 
 .. _`PyTorch`: http://pytorch.org/

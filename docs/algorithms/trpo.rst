@@ -154,34 +154,7 @@ Pseudocode
 Documentation
 =============
 
-.. admonition:: You Should Know
-
-    Spinning Up currently only has a Tensorflow implementation of TRPO. 
-
-.. autofunction:: spinup.trpo_tf1
-
-
-Saved Model Contents
---------------------
-
-The computation graph saved by the logger includes:
-
-========  ====================================================================
-Key       Value
-========  ====================================================================
-``x``     Tensorflow placeholder for state input.
-``pi``    Samples an action from the agent, conditioned on states in ``x``.
-``v``     Gives value estimate for states in ``x``. 
-========  ====================================================================
-
-This saved model can be accessed either by
-
-* running the trained policy with the `test_policy.py`_ tool,
-* or loading the whole saved graph into a program with `restore_tf_graph`_. 
-
-.. _`test_policy.py`: ../user/saving_and_loading.html#loading-and-running-trained-policies
-.. _`restore_tf_graph`: ../utils/logger.html#spinup.utils.logx.restore_tf_graph
-
+Note: TRPO currently only has a stub implementation. The full PyTorch version is pending.
 References
 ==========
 

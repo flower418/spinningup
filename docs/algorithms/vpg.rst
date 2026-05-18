@@ -85,9 +85,7 @@ Pseudocode
 Documentation
 =============
 
-.. admonition:: You Should Know
-
-    In what follows, we give documentation for the PyTorch and Tensorflow implementations of VPG in Spinning Up. They have nearly identical function calls and docstrings, except for details relating to model construction. However, we include both full docstrings for completeness.
+Below is the documentation for the PyTorch implementation.
 
 
 Documentation: PyTorch Version
@@ -107,31 +105,6 @@ You can get actions from this model with
     actions = ac.act(torch.as_tensor(obs, dtype=torch.float32))
 
 
-Documentation: Tensorflow Version
----------------------------------
-
-.. autofunction:: spinup.vpg_tf1
-
-Saved Model Contents: Tensorflow Version
-----------------------------------------
-
-The computation graph saved by the logger includes:
-
-========  ====================================================================
-Key       Value
-========  ====================================================================
-``x``     Tensorflow placeholder for state input.
-``pi``    Samples an action from the agent, conditioned on states in ``x``.
-``v``     Gives value estimate for states in ``x``. 
-========  ====================================================================
-
-This saved model can be accessed either by
-
-* running the trained policy with the `test_policy.py`_ tool,
-* or loading the whole saved graph into a program with `restore_tf_graph`_. 
-
-.. _`test_policy.py`: ../user/saving_and_loading.html#loading-and-running-trained-policies
-.. _`restore_tf_graph`: ../utils/logger.html#spinup.utils.logx.restore_tf_graph
 
 References
 ==========

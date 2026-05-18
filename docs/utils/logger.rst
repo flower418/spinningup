@@ -43,21 +43,63 @@ Next, let's look at a full training procedure with the logger embedded, to highl
    :emphasize-lines: 18, 19, 42, 43, 54, 58, 61, 62, 63, 64, 65, 66
 
     import numpy as np
-    import tensorflow as tf
+    import numpy as np
+    import torch
+    import torch.nn as nn
+    from torch.optim import Adam
     import time
     from spinup.utils.logx import EpochLogger
 
 
-    def mlp(x, hidden_sizes=(32,), activation=tf.tanh, output_activation=None):
-        for h in hidden_sizes[:-1]:
-            x = tf.layers.dense(x, units=h, activation=activation)
-        return tf.layers.dense(x, units=hidden_sizes[-1], activation=output_activation)
+    def mlp(sizes, activation=nn.ReLU, output_activation=nn.Identity):
+        layers = []
+        for j in range(len(sizes)-1):
+            act = activation if j < len(sizes)-2 else output_activation
+            layers += [nn.Linear(sizes[j], sizes[j+1]), act()]
+        return nn.Sequential(*layers)
 
 
-    # Simple script for training an MLP on MNIST.
-    def train_mnist(steps_per_epoch=100, epochs=5, 
-                    lr=1e-3, layers=2, hidden_size=64, 
+    def train_mnist(steps_per_epoch=100, epochs=5,
+                    lr=1e-3, layers=2, hidden_size=64,
                     logger_kwargs=dict(), save_freq=1):
+
+        logger = EpochLogger(**logger_kwargs)
+        logger.save_config(locals())
+
+        # Load and preprocess MNIST data
+        import torchvision
+        mnist = torchvision.datasets.MNIST("/tmp/mnist", download=True,
+            transform=torchvision.transforms.ToTensor())
+        loader = torch.utils.data.DataLoader(mnist, batch_size=32, shuffle=True)
+
+        # Build model
+        model = mlp(sizes=[28*28] + [hidden_size]*layers + [10],
+                    activation=nn.ReLU, output_activation=nn.Identity)
+        loss_fn = nn.CrossEntropyLoss()
+        optimizer = Adam(model.parameters(), lr=lr)
+
+        # Setup model saving
+        logger.setup_pytorch_saver(model)
+
+        start_time = time.time()
+
+        for epoch in range(epochs):
+            for t, (x, y) in enumerate(loader):
+                if t >= steps_per_epoch: break
+                x = x.reshape(-1, 28*28)
+                optimizer.zero_grad()
+                loss = loss_fn(model(x), y)
+                loss.backward()
+                optimizer.step()
+                logger.store(Loss=loss.item())
+
+            if (epoch % save_freq == 0) or (epoch == epochs-1):
+                logger.save_state(state_dict=dict(), itr=None)
+
+            logger.log_tabular("Epoch", epoch)
+            logger.log_tabular("Loss", average_only=True)
+            logger.log_tabular("Time", time.time()-start_time)
+            logger.dump_tabular()
 
         logger = EpochLogger(**logger_kwargs)
         logger.save_config(locals())
@@ -83,7 +125,7 @@ Next, let's look at a full training procedure with the logger embedded, to highl
         sess.run(tf.global_variables_initializer())
 
         # Setup model saving
-        logger.setup_tf_saver(sess, inputs={'x': x_ph}, 
+        logger.setup_pytorch_saver(sess, inputs={'x': x_ph}, 
                                     outputs={'logits': logits, 'predict': predict})
 
         start_time = time.time()
@@ -115,13 +157,13 @@ Next, let's look at a full training procedure with the logger embedded, to highl
 In this example, observe that
 
 * On line 19, `logger.save_config`_ is used to save the hyperparameter configuration to a JSON file.
-* On lines 42 and 43, `logger.setup_tf_saver`_ is used to prepare the logger to save the key elements of the computation graph.
+* On lines 42 and 43, `logger.setup_pytorch_saver`_ is used to prepare the logger to save the key elements of the computation graph.
 * On line 54, diagnostics are saved to the logger's internal state via `logger.store`_.
 * On line 58, the computation graph is saved once per epoch via `logger.save_state`_.
 * On lines 61-66, `logger.log_tabular`_ and `logger.dump_tabular`_ are used to write the epoch diagnostics to file. Note that the keys passed into `logger.log_tabular`_ are the same as the keys passed into `logger.store`_.
 
 .. _`logger.save_config`: ../utils/logger.html#spinup.utils.logx.Logger.save_config
-.. _`logger.setup_tf_saver`: ../utils/logger.html#spinup.utils.logx.Logger.setup_tf_saver
+.. _`logger.setup_pytorch_saver`: ../utils/logger.html#spinup.utils.logx.Logger.setup_tf_saver
 .. _`logger.store`: ../utils/logger.html#spinup.utils.logx.EpochLogger.store
 .. _`logger.save_state`: ../utils/logger.html#spinup.utils.logx.Logger.save_state
 .. _`logger.log_tabular`: ../utils/logger.html#spinup.utils.logx.EpochLogger.log_tabular
@@ -131,7 +173,7 @@ In this example, observe that
 Logging and PyTorch
 -------------------
 
-The preceding example was given in Tensorflow. For PyTorch, everything is the same except for L42-43: instead of ``logger.setup_tf_saver``, you would use ``logger.setup_pytorch_saver``, and you would pass it `a PyTorch module`_ (the network you are training) as an argument.
+The preceding example was given in Tensorflow. For PyTorch, everything is the same except for L42-43: instead of ``logger.setup_pytorch_saver``, you would use ``logger.setup_pytorch_saver``, and you would pass it `a PyTorch module`_ (the network you are training) as an argument.
 
 The behavior of ``logger.save_state`` is the same as in the Tensorflow case: each time it is called, it'll save the latest version of the PyTorch module.
 
@@ -175,12 +217,7 @@ When you use this method to load an actor-critic model, you can minimally expect
     actions = ac.act(torch.as_tensor(obs, dtype=torch.float32))
 
 
-Loading Saved Graphs (Tensorflow Only)
-======================================
 
-.. autofunction:: spinup.utils.logx.restore_tf_graph
-
-When you use this method to restore a graph saved by a Tensorflow Spinning Up implementation, you can minimally expect it to include the following:
 
 ======  ===============================================
 Key     Value
