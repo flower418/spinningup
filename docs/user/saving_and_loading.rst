@@ -23,13 +23,9 @@ Each algorithm is set up to save a training run's hyperparameter configuration, 
 +--------------------------------------------------------------------------------+
 | **Output Directory Structure**                                                 |
 +----------------+---------------------------------------------------------------+
-|``pyt_save/``   | | **PyTorch implementations only.** A directory containing    |
-|                | | everything needed to restore the trained agent and value    |
-|                | | functions. (`Details for PyTorch saves below.`_)            |
-+----------------+---------------------------------------------------------------+
-|``tf1_save/``   | | **Tensorflow implementations only.** A directory containing |
-|                | | everything needed to restore the trained agent and value    |
-|                | | functions. (`Details for Tensorflow saves below.`_)         |
+|``pyt_save/``   | | A directory containing everything needed to restore the    |
+|                | | trained agent and value functions.                           |
+|                | | (`Details for PyTorch saves below.`_)                       |
 +----------------+---------------------------------------------------------------+
 |``config.json`` | | A dict containing an as-complete-as-possible description    |
 |                | | of the args and kwargs you used to launch the training      |
@@ -50,16 +46,11 @@ Each algorithm is set up to save a training run's hyperparameter configuration, 
 
 .. admonition:: You Should Know
 
-    Sometimes environment-saving fails because the environment can't be pickled, and ``vars.pkl`` is empty. This is known to be a problem for Gym Box2D environments in older versions of Gym, which can't be saved in this manner.
+    Sometimes environment-saving fails because the environment can't be pickled, and ``vars.pkl`` is empty. This is known to be a problem for Gymnasium Box2D environments, which can't be saved in this manner.
 
 .. admonition:: You Should Know
 
-    As of 1/30/20, the save directory structure has changed slightly. Previously, Tensorflow graphs were saved in the ``simple_save/`` folder; this has been replaced with ``tf1_save/``.
-
-.. admonition:: You Should Know
-
-    The only file in here that you should ever have to use "by hand" is the ``config.json`` file. Our agent testing utility will load things from the ``tf1_save/`` or ``pyt_save/`` directory, and our plotter interprets the contents of ``progress.txt``, and those are the correct tools for interfacing with these outputs. But there is no tooling for ``config.json``---it's just there so that if you forget what hyperparameters you ran an experiment with, you can double-check.
-
+    The only file in here that you should ever have to use "by hand" is the ``config.json`` file. Our agent testing utility will load things from the ``pyt_save/`` directory, and our plotter interprets the contents of ``progress.txt``, and those are the correct tools for interfacing with these outputs. But there is no tooling for ``config.json``---it's just there so that if you forget what hyperparameters you ran an experiment with, you can double-check.
 
 
 PyTorch Save Directory Info
@@ -76,28 +67,6 @@ The ``pyt_save`` directory contains:
 |                  | | a trained agent as an ActorCritic object with an ``act``    |
 |                  | | method.                                                     |
 +------------------+---------------------------------------------------------------+
-
-
-Tensorflow Save Directory Info
-------------------------------
-.. _`Details for Tensorflow saves below.`:
-
-The ``tf1_save`` directory contains:
-
-+----------------------------------------------------------------------------------+
-| **TF1_Save Directory Structure**                                                 |
-+------------------+---------------------------------------------------------------+
-|``variables/``    | | A directory containing outputs from the Tensorflow Saver.   |
-|                  | | See documentation for `Tensorflow SavedModel`_.             |
-+------------------+---------------------------------------------------------------+
-|``model_info.pkl``| | A dict containing information (map from key to tensor name) |
-|                  | | which helps us unpack the saved model after loading.        |
-+------------------+---------------------------------------------------------------+
-|``saved_model.pb``| | A protocol buffer, needed for a `Tensorflow SavedModel`_.   |
-+------------------+---------------------------------------------------------------+
-
-
-.. _`Tensorflow SavedModel`: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/saved_model/README.md
 
 
 Save Directory Location
@@ -117,7 +86,7 @@ Experiment results will, by default, be saved in the same directory as the Spinn
         LICENSE
         setup.py
 
-You can change the default results directory by modifying ``DEFAULT_DATA_DIR`` in ``spinup/user_config.py``. 
+You can change the default results directory by modifying ``DEFAULT_DATA_DIR`` in ``spinup/user_config.py``.
 
 
 Loading and Running Trained Policies
@@ -140,7 +109,7 @@ There are a few flags for options:
 
 .. option:: -l L, --len=L, default=0
 
-    *int*. Maximum length of test episode / trajectory / rollout. The default of 0 means no maximum episode length---episodes only end when the agent has reached a terminal state in the environment. (Note: setting L=0 will not prevent Gym envs wrapped by TimeLimit wrappers from ending when they reach their pre-set maximum episode length.)
+    *int*. Maximum length of test episode / trajectory / rollout. The default of 0 means no maximum episode length---episodes only end when the agent has reached a terminal state in the environment. (Note: setting L=0 will not prevent Gymnasium envs wrapped by TimeLimit wrappers from ending when they reach their pre-set maximum episode length.)
 
 .. option:: -n N, --episodes=N, default=100
 
@@ -152,7 +121,7 @@ There are a few flags for options:
 
 .. option:: -i I, --itr=I, default=-1
 
-    *int*. This is an option for a special case which is not supported by algorithms in this package as-shipped, but which they are easily modified to do. Use case: Sometimes it's nice to watch trained agents from many different points in training (eg watch at iteration 50, 100, 150, etc.). The logger can do this---save snapshots of the agent from those different points, so they can be run and watched later. In this case, you use this flag to specify which iteration to run. But again: spinup algorithms by default only save snapshots of the most recent agent, overwriting the old snapshots. 
+    *int*. This is an option for a special case which is not supported by algorithms in this package as-shipped, but which they are easily modified to do. Use case: Sometimes it's nice to watch trained agents from many different points in training (eg watch at iteration 50, 100, 150, etc.). The logger can do this---save snapshots of the agent from those different points, so they can be run and watched later. In this case, you use this flag to specify which iteration to run. But again: spinup algorithms by default only save snapshots of the most recent agent, overwriting the old snapshots.
 
     The default value of this flag means "use the latest snapshot."
 
@@ -199,9 +168,9 @@ If the environment wasn't saved successfully, you can expect ``test_policy.py`` 
 In this case, watching your agent perform is slightly more of a pain but not impossible, as long as you can recreate your environment easily. Try the following in IPython:
 
 >>> from spinup.utils.test_policy import load_policy_and_env, run_policy
->>> import your_env
+>>> import gymnasium as gym
 >>> _, get_action = load_policy_and_env('/path/to/output_directory')
->>> env = your_env.make()
+>>> env = gym.make('YourEnv-v0')
 >>> run_policy(env, get_action)
 Logging data to /tmp/experiments/1536150702/progress.txt
 Episode 0    EpRet -163.830      EpLen 93
@@ -212,6 +181,4 @@ Episode 1    EpRet -346.164      EpLen 99
 Using Trained Value Functions
 -----------------------------
 
-The ``test_policy.py`` tool doesn't help you look at trained value functions, and if you want to use those, you will have to do some digging by hand. For the PyTorch case, load the saved model file with ``torch.load`` and check the documentation for each algorithm to see what modules the ActorCritic object has. For the Tensorflow case, load the saved computation graph with the `restore_tf_graph`_ function, and check the documentation for each algorithm to see what functions were saved.
-
-.. _`restore_tf_graph`: ../utils/logger.html#spinup.utils.logx.restore_tf_graph
+The ``test_policy.py`` tool doesn't help you look at trained value functions, and if you want to use those, you will have to do some digging by hand. Load the saved model file with ``torch.load`` and check the documentation for each algorithm to see what modules the ActorCritic object has.

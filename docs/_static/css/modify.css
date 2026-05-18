@@ -165,10 +165,16 @@ a:visited {
  color: var(--color--coolgray2) !important;
 }
 
-/* PDF page breaks */
-h1 { page-break-before: always; }
-h2 { page-break-before: always; }
-h1:first-child { page-break-before: avoid; }
-h2:first-of-type { page-break-before: avoid; }
-.wy-nav-side, .wy-nav-top, .rst-versions { display: none !important; }
-.wy-nav-content-wrap { margin-left: 0 !important; }
+.wy-nav-content {
+  max-width: none !important;
+}
+
+/* PDF page breaks — only for print/PDF */
+@media print {
+  h1 { page-break-before: always; }
+  h2 { page-break-before: always; }
+  h1:first-child { page-break-before: avoid; }
+  h2:first-of-type { page-break-before: avoid; }
+  .wy-nav-side, .wy-nav-top, .rst-versions { display: none !important; }
+  .wy-nav-content-wrap { margin-left: 0 !important; }
+}
