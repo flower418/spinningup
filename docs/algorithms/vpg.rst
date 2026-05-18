@@ -91,7 +91,7 @@ Below is the documentation for the PyTorch implementation.
 Documentation: PyTorch Version
 ------------------------------
 
-.. autofunction:: spinup.vpg_pytorch
+.. autofunction:: spinup.vpg
 
 Saved Model Contents: PyTorch Version
 -------------------------------------

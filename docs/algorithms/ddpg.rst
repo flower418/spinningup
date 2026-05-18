@@ -179,7 +179,7 @@ Below is the documentation for the PyTorch implementation.
 Documentation: PyTorch Version
 ------------------------------
 
-.. autofunction:: spinup.ddpg_pytorch
+.. autofunction:: spinup.ddpg
 
 Saved Model Contents: PyTorch Version
 -------------------------------------

@@ -158,7 +158,7 @@ Below is the documentation for the PyTorch implementation.
 Documentation: PyTorch Version
 ------------------------------
 
-.. autofunction:: spinup.ppo_pytorch
+.. autofunction:: spinup.ppo
 
 Saved Model Contents: PyTorch Version
 -------------------------------------

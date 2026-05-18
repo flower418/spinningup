@@ -31,6 +31,11 @@ Welcome to Spinning Up in Deep RL!
    spinningup/keypapers
    spinningup/exercises
    spinningup/bench
+   spinningup/bench_vpg
+   spinningup/bench_ppo
+   spinningup/bench_ddpg
+   spinningup/bench_td3
+   spinningup/bench_sac
 
 .. toctree::
    :maxdepth: 2

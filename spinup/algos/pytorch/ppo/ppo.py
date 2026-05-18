@@ -163,7 +163,7 @@ def ppo(env_fn, actor_critic=core.MLPActorCritic, ac_kwargs=dict(), seed=0,
             still profiting (improving the objective function)? The new policy 
             can still go farther than the clip_ratio says, but it doesn't help
             on the objective anymore. (Usually small, 0.1 to 0.3.) Typically
-            denoted by :math:`\epsilon`. 
+            denoted by :math:`\\epsilon`. 
 
         pi_lr (float): Learning rate for policy optimizer.
 

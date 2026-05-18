@@ -246,7 +246,7 @@ Below is the documentation for the PyTorch implementation.
 Documentation: PyTorch Version
 ------------------------------
 
-.. autofunction:: spinup.sac_pytorch
+.. autofunction:: spinup.sac
 
 Saved Model Contents: PyTorch Version
 -------------------------------------

@@ -146,7 +146,7 @@ Below is the documentation for the PyTorch implementation.
 Documentation: PyTorch Version
 ------------------------------
 
-.. autofunction:: spinup.td3_pytorch
+.. autofunction:: spinup.td3
 
 Saved Model Contents: PyTorch Version
 -------------------------------------
