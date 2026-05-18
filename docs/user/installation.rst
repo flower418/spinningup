@@ -79,10 +79,11 @@ This installs Spinning Up with its core dependencies (Gymnasium, PyTorch, NumPy,
 Check Your Install
 ==================
 
-To verify installation, run PPO on a simple environment:
+To verify installation, first install Box2D (required by LunarLander), then run PPO:
 
 .. parsed-literal::
 
+    pip install "gymnasium[box2d]"
     python -m spinup.run ppo --hid "[32,32]" --env LunarLander-v3 --exp_name installtest --gamma 0.999
 
 This will train for about 10 minutes — enough to see some learning progress.
