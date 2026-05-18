@@ -68,13 +68,18 @@ def run_policy(env, get_action, max_ep_len=None, num_episodes=100, render=True):
         try:
             env = gymnasium.wrappers.HumanRendering(env)
         except Exception:
-            pass
+            print("Warning: could not set up rendering, continuing without display.")
+            render = False
     o, _ = env.reset()
     r, d, ep_ret, ep_len, n = 0, False, 0, 0, 0
     while n < num_episodes:
         if render:
-            env.render()
-            time.sleep(1e-3)
+            try:
+                env.render()
+                time.sleep(1e-3)
+            except Exception:
+                print("Warning: render failed, disabling display.")
+                render = False
 
         a = get_action(o)
         o, r, terminated, truncated, _ = env.step(a)
