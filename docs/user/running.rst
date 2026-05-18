@@ -24,7 +24,7 @@ eg:
 
 .. parsed-literal::
 
-    python -m spinup.run ppo --env Walker2d-v2 --exp_name walker
+    python -m spinup.run ppo --env Walker2d-v4 --exp_name walker
 
 .. _`experiment outputs`: ../user/saving_and_loading.html
 .. _`plotting`: ../user/plotting.html
@@ -37,13 +37,11 @@ eg:
 
     .. parsed-literal::
 
-        python -m spinup.run ppo --exp_name ppo_ant --env Ant-v2 --clip_ratio 0.1 0.2 
+        python -m spinup.run ppo --exp_name ppo_ant --env Ant-v4 --clip_ratio 0.1 0.2
             --hid[h] [32,32] [64,32] --act torch.nn.Tanh --seed 0 10 20 --dt
             --data_dir path/to/data
 
-    runs PPO in the ``Ant-v2`` Gym environment, with various settings controlled by the flags.
-
-    By default, the PyTorch version will run (except for with TRPO, since Spinning Up doesn't have a PyTorch TRPO yet). Substitute ``ppo`` with ``ppo_tf1`` for the Tensorflow version.
+    runs PPO in the ``Ant-v4`` Gymnasium environment, with various settings controlled by the flags.
 
     ``clip_ratio``, ``hid``, and ``act`` are flags to set some algorithm hyperparameters. You can provide multiple values for hyperparameters to run multiple experiments. Check the docs to see what hyperparameters you can set (click here for the `PPO documentation`_).
 
@@ -65,25 +63,8 @@ eg:
 .. _`special shortcut flags`: ../user/running.html#shortcut-flags
 .. _`Save directory names`: ../user/running.html#where-results-are-saved
 
-Choosing PyTorch or Tensorflow from the Command Line
-----------------------------------------------------
-
-To use a PyTorch version of an algorithm, run with 
-
-.. parsed-literal::
-
-    python -m spinup.run [algo]_pytorch
-
-To use a Tensorflow version of an algorithm, run with 
-
-.. parsed-literal::
-
-    python -m spinup.run [algo]_tf1 
-
-If you run ``python -m spinup.run [algo]`` without ``_pytorch`` or ``_tf1``, the runner will look in ``spinup/user_config.py`` for which version it should default to for that algorithm.
-
 Setting Hyperparameters from the Command Line
----------------------------------------------
+----------------------------------------------
 
 Every hyperparameter in every algorithm can be controlled directly from the command line. If ``kwarg`` is a valid keyword arg for the function call of an algorithm, you can set values for it with the flag ``--kwarg``. To find out what keyword args are available, see either the docs page for an algorithm, or try
 
@@ -99,9 +80,9 @@ to see a readout of the docstring.
 
     .. parsed-literal::
 
-        python -m spinup.run ppo --env Walker2d-v2 --exp_name walker --act torch.nn.ELU
+        python -m spinup.run ppo --env Walker2d-v4 --exp_name walker --act torch.nn.ELU
 
-    sets ``torch.nn.ELU`` as the activation function. (Tensorflow equivalent: run ``ppo_tf1`` with ``--act tf.nn.elu``.)
+    sets ``torch.nn.ELU`` as the activation function.
 
 .. admonition:: You Should Know
 
@@ -115,7 +96,7 @@ to see a readout of the docstring.
 
     .. parsed-literal::
 
-        --key:v1 value_1 --key:v2 value_2 
+        --key:v1 value_1 --key:v2 value_2
 
     to get the same result.
 
@@ -128,10 +109,9 @@ For example, to launch otherwise-equivalent runs with different random seeds (0,
 
 .. parsed-literal::
 
-    python -m spinup.run ppo --env Walker2d-v2 --exp_name walker --seed 0 10 20
+    python -m spinup.run ppo --env Walker2d-v4 --exp_name walker --seed 0 10 20
 
 Experiments don't launch in parallel because they soak up enough resources that executing several at the same time wouldn't get a speedup.
-
 
 
 Special Flags
@@ -145,21 +125,21 @@ Environment Flag
 
 .. option:: --env, --env_name
 
-    *string*. The name of an environment in the OpenAI Gym. All Spinning Up algorithms are implemented as functions that accept ``env_fn`` as an argument, where ``env_fn`` must be a callable function that builds a copy of the RL environment. Since the most common use case is Gym environments, though, all of which are built through ``gym.make(env_name)``, we allow you to just specify ``env_name`` (or ``env`` for short) at the command line, which gets converted to a lambda-function that builds the correct gym environment.
+    *string*. The name of an environment in Gymnasium. All Spinning Up algorithms are implemented as functions that accept ``env_fn`` as an argument, where ``env_fn`` must be a callable function that builds a copy of the RL environment. Since the most common use case is Gymnasium environments, all of which are built through ``gym.make(env_name)``, we allow you to just specify ``env_name`` (or ``env`` for short) at the command line, which gets converted to a lambda-function that builds the correct environment.
 
 
 Shortcut Flags
 ^^^^^^^^^^^^^^
 
-Some algorithm arguments are relatively long, and we enabled shortcuts for them: 
+Some algorithm arguments are relatively long, and we enabled shortcuts for them:
 
 .. option:: --hid, --ac_kwargs:hidden_sizes
 
-    *list of ints*. Sets the sizes of the hidden layers in the neural networks (policies and value functions). 
+    *list of ints*. Sets the sizes of the hidden layers in the neural networks (policies and value functions).
 
 .. option:: --act, --ac_kwargs:activation
 
-    *tf op*. The activation function for the neural networks in the actor and critic.
+    *torch.nn activation*. The activation function for the neural networks in the actor and critic.
 
 These flags are valid for all current Spinning Up algorithms.
 
@@ -194,9 +174,9 @@ Results for a particular experiment (a single run of a configuration of hyperpar
 
     data_dir/[outer_prefix]exp_name[suffix]/[inner_prefix]exp_name[suffix]_s[seed]
 
-where 
+where
 
-* ``data_dir`` is the value of the ``--data_dir`` flag (defaults to ``DEFAULT_DATA_DIR`` from ``spinup/user_config.py`` if ``--data_dir`` is not given), 
+* ``data_dir`` is the value of the ``--data_dir`` flag (defaults to ``DEFAULT_DATA_DIR`` from ``spinup/user_config.py`` if ``--data_dir`` is not given),
 * the ``outer_prefix`` is a ``YY-MM-DD_`` timestamp if the ``--datestamp`` flag is raised, otherwise nothing,
 * the ``inner_prefix`` is a ``YY-MM-DD_HH-MM-SS-`` timestamp if the ``--datestamp`` flag is raised, otherwise nothing,
 * and ``suffix`` is a special string based on the experiment hyperparameters.
@@ -206,13 +186,13 @@ How is Suffix Determined?
 
 Suffixes are only included if you run multiple experiments at once, and they only include references to hyperparameters that differ across experiments, except for random seed. The goal is to make sure that results for similar experiments (ones which share all params except seed) are grouped in the same folder.
 
-Suffixes are constructed by combining *shorthands* for hyperparameters with their values, where a shorthand is either 1) constructed automatically from the hyperparameter name or 2) supplied by the user. The user can supply a shorthand by writing in square brackets after the kwarg flag. 
+Suffixes are constructed by combining *shorthands* for hyperparameters with their values, where a shorthand is either 1) constructed automatically from the hyperparameter name or 2) supplied by the user. The user can supply a shorthand by writing in square brackets after the kwarg flag.
 
 For example, consider:
 
 .. parsed-literal::
 
-    python -m spinup.run ddpg_tf1 --env Hopper-v2 --hid[h] [300] [128,128] --act tf.nn.tanh tf.nn.relu
+    python -m spinup.run ddpg --env Hopper-v4 --hid[h] [300] [128,128] --act torch.nn.Tanh torch.nn.ReLU
 
 Here, the ``--hid`` flag is given a **user-supplied shorthand**, ``h``. The ``--act`` flag is not given a shorthand by the user, so one will be constructed for it automatically.
 
@@ -232,28 +212,27 @@ Extra
 
 .. admonition:: You Don't Actually Need to Know This One
 
-    Each individual algorithm is located in a file ``spinup/algos/BACKEND/ALGO_NAME/ALGO_NAME.py``, and these files can be run directly from the command line with a limited set of arguments (some of which differ from what's available to ``spinup/run.py``). The command line support in the individual algorithm files is essentially vestigial, however, and this is **not** a recommended way to perform experiments. 
+    Each individual algorithm is located in a file ``spinup/algos/pytorch/ALGO_NAME/ALGO_NAME.py``, and these files can be run directly from the command line with a limited set of arguments (some of which differ from what's available to ``spinup/run.py``). The command line support in the individual algorithm files is essentially vestigial, however, and this is **not** a recommended way to perform experiments.
 
-    This documentation page will not describe those command line calls, and will *only* describe calls through ``spinup/run.py``. 
+    This documentation page will not describe those command line calls, and will *only* describe calls through ``spinup/run.py``.
 
 Launching from Scripts
 ======================
 
 Each algorithm is implemented as a python function, which can be imported directly from the ``spinup`` package, eg
 
->>> from spinup import ppo_pytorch as ppo
+>>> from spinup import ppo
 
 See the documentation page for each algorithm for a complete account of possible arguments. These methods can be used to set up specialized custom experiments, for example:
 
 .. code-block:: python
 
-    from spinup import ppo_tf1 as ppo
-    import tensorflow as tf
-    import gym
+    from spinup import ppo
+    import gymnasium as gym
 
-    env_fn = lambda : gym.make('LunarLander-v2')
+    env_fn = lambda : gym.make('LunarLander-v3')
 
-    ac_kwargs = dict(hidden_sizes=[64,64], activation=tf.nn.relu)
+    ac_kwargs = dict(hidden_sizes=[64,64], activation=torch.nn.ReLU)
 
     logger_kwargs = dict(output_dir='path/to/output_dir', exp_name='experiment_name')
 
@@ -263,7 +242,7 @@ See the documentation page for each algorithm for a complete account of possible
 Using ExperimentGrid
 --------------------
 
-It's often useful in machine learning research to run the same algorithm with many possible hyperparameters. Spinning Up ships with a simple tool for facilitating this, called `ExperimentGrid`_. 
+It's often useful in machine learning research to run the same algorithm with many possible hyperparameters. Spinning Up ships with a simple tool for facilitating this, called `ExperimentGrid`_.
 
 
 Consider the example in ``spinup/examples/pytorch/bench_ppo_cartpole.py``:
@@ -272,7 +251,7 @@ Consider the example in ``spinup/examples/pytorch/bench_ppo_cartpole.py``:
    :linenos:
 
     from spinup.utils.run_utils import ExperimentGrid
-    from spinup import ppo_pytorch
+    from spinup import ppo
     import torch
 
     if __name__ == '__main__':
@@ -282,16 +261,14 @@ Consider the example in ``spinup/examples/pytorch/bench_ppo_cartpole.py``:
         parser.add_argument('--num_runs', type=int, default=3)
         args = parser.parse_args()
 
-        eg = ExperimentGrid(name='ppo-pyt-bench')
-        eg.add('env_name', 'CartPole-v0', '', True)
+        eg = ExperimentGrid(name='ppo-bench')
+        eg.add('env_name', 'CartPole-v1', '', True)
         eg.add('seed', [10*i for i in range(args.num_runs)])
         eg.add('epochs', 10)
         eg.add('steps_per_epoch', 4000)
         eg.add('ac_kwargs:hidden_sizes', [(32,), (64,64)], 'hid')
         eg.add('ac_kwargs:activation', [torch.nn.Tanh, torch.nn.ReLU], '')
-        eg.run(ppo_pytorch, num_cpu=args.cpu)
-
-(An equivalent Tensorflow example is available in ``spinup/examples/tf1/bench_ppo_cartpole.py``.)
+        eg.run(ppo, num_cpu=args.cpu)
 
 After making the ExperimentGrid object, parameters are added to it with
 

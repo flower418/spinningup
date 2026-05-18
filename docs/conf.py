@@ -41,6 +41,8 @@ MOCK_MODULES = ['mpi4py',
                 'torch.distributions.normal',
                 'torch.distributions.categorical',
                 'torch.nn.functional',
+                'scipy',
+                'scipy.signal',
                 ]
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
