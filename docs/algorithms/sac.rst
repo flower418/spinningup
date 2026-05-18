@@ -194,46 +194,43 @@ Pseudocode
 ----------
 
 
-.. math::
-    :nowrap:
+**Pseudocode**
 
-    \begin{algorithm}[H]
-        \caption{Soft Actor-Critic}
-        \label{alg1}
-    \begin{algorithmic}[1]
-        \STATE Input: initial policy parameters $\theta$, Q-function parameters $\phi_1$, $\phi_2$, empty replay buffer $\mathcal{D}$
-        \STATE Set target parameters equal to main parameters $\phi_{\text{targ},1} \leftarrow \phi_1$, $\phi_{\text{targ},2} \leftarrow \phi_2$
-        \REPEAT
-            \STATE Observe state $s$ and select action $a \sim \pi_{\theta}(\cdot|s)$
-            \STATE Execute $a$ in the environment
-            \STATE Observe next state $s'$, reward $r$, and done signal $d$ to indicate whether $s'$ is terminal
-            \STATE Store $(s,a,r,s',d)$ in replay buffer $\mathcal{D}$
-            \STATE If $s'$ is terminal, reset environment state.
-            \IF{it's time to update}
-                \FOR{$j$ in range(however many updates)}
-                    \STATE Randomly sample a batch of transitions, $B = \{ (s,a,r,s',d) \}$ from $\mathcal{D}$
-                    \STATE Compute targets for the Q functions:
-                    \begin{align*}
-                        y (r,s',d) &= r + \gamma (1-d) \left(\min_{i=1,2} Q_{\phi_{\text{targ}, i}} (s', \tilde{a}') - \alpha \log \pi_{\theta}(\tilde{a}'|s')\right), && \tilde{a}' \sim \pi_{\theta}(\cdot|s')
-                    \end{align*}
-                    \STATE Update Q-functions by one step of gradient descent using
-                    \begin{align*}
-                        & \nabla_{\phi_i} \frac{1}{|B|}\sum_{(s,a,r,s',d) \in B} \left( Q_{\phi_i}(s,a) - y(r,s',d) \right)^2 && \text{for } i=1,2
-                    \end{align*}
-                    \STATE Update policy by one step of gradient ascent using
-                    \begin{equation*}
-                        \nabla_{\theta} \frac{1}{|B|}\sum_{s \in B} \Big(\min_{i=1,2} Q_{\phi_i}(s, \tilde{a}_{\theta}(s)) - \alpha \log \pi_{\theta} \left(\left. \tilde{a}_{\theta}(s) \right| s\right) \Big),
-                    \end{equation*}
-                    where $\tilde{a}_{\theta}(s)$ is a sample from $\pi_{\theta}(\cdot|s)$ which is differentiable wrt $\theta$ via the reparametrization trick.
-                    \STATE Update target networks with
-                    \begin{align*}
-                        \phi_{\text{targ},i} &\leftarrow \rho \phi_{\text{targ}, i} + (1-\rho) \phi_i && \text{for } i=1,2
-                    \end{align*}
-                \ENDFOR
-            \ENDIF
-        \UNTIL{convergence}
-    \end{algorithmic}
-    \end{algorithm}
+#. Input: initial policy parameters :math:`\theta`, Q-function parameters :math:`\phi_1`, :math:`\phi_2`, empty replay buffer :math:`\mathcal{D}`
+#. Set target parameters equal to main parameters :math:`\phi_{\text{targ},1} \leftarrow \phi_1`, :math:`\phi_{\text{targ},2} \leftarrow \phi_2`
+#. **repeat**
+#.     Observe state :math:`s` and select action :math:`a \sim \pi_{\theta}(\cdot|s)`
+#.     Execute :math:`a` in the environment
+#.     Observe next state :math:`s'`, reward :math:`r`, and done signal :math:`d` to indicate whether :math:`s'` is terminal
+#.     Store :math:`(s,a,r,s',d)` in replay buffer :math:`\mathcal{D}`
+#.     If :math:`s'` is terminal, reset environment state.
+#.     **if** it's time to update **then**
+#.         **for** :math:`j` in range(however many updates) **do**
+#.             Randomly sample a batch of transitions, :math:`B = \{ (s,a,r,s',d) \}` from :math:`\mathcal{D}`
+#.             Compute targets for the Q functions:
+
+               .. math::
+                   y (r,s',d) = r + \gamma (1-d) \left(\min_{i=1,2} Q_{\phi_{\text{targ}, i}} (s', \tilde{a}') - \alpha \log \pi_{\theta}(\tilde{a}'|s')\right), \qquad \tilde{a}' \sim \pi_{\theta}(\cdot|s')
+
+#.             Update Q-functions by one step of gradient descent using
+
+               .. math::
+                   \nabla_{\phi_i} \frac{1}{|B|}\sum_{(s,a,r,s',d) \in B} \left( Q_{\phi_i}(s,a) - y(r,s',d) \right)^2 \qquad \text{for } i=1,2
+
+#.             Update policy by one step of gradient ascent using
+
+               .. math::
+                   \nabla_{\theta} \frac{1}{|B|}\sum_{s \in B} \Big(\min_{i=1,2} Q_{\phi_i}(s, \tilde{a}_{\theta}(s)) - \alpha \log \pi_{\theta} \left(\left. \tilde{a}_{\theta}(s) \right| s\right) \Big),
+
+               where :math:`\tilde{a}_{\theta}(s)` is a sample from :math:`\pi_{\theta}(\cdot|s)` which is differentiable wrt :math:`\theta` via the reparametrization trick.
+#.             Update target networks with
+
+               .. math::
+                   \phi_{\text{targ},i} \leftarrow \rho \phi_{\text{targ}, i} + (1-\rho) \phi_i \qquad \text{for } i=1,2
+
+#.         **end for**
+#.     **end if**
+#. **until** convergence
 
 
 Documentation

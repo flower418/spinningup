@@ -113,41 +113,38 @@ TRPO trains a stochastic policy in an on-policy way. This means that it explores
 Pseudocode
 ----------
 
-.. math::
-    :nowrap:
+**Pseudocode**
 
-    \begin{algorithm}[H]
-        \caption{Trust Region Policy Optimization}
-        \label{alg1}
-    \begin{algorithmic}[1]
-        \STATE Input: initial policy parameters $\theta_0$, initial value function parameters $\phi_0$
-        \STATE Hyperparameters: KL-divergence limit $\delta$, backtracking coefficient $\alpha$, maximum number of backtracking steps $K$
-        \FOR{$k = 0,1,2,...$} 
-        \STATE Collect set of trajectories ${\mathcal D}_k = \{\tau_i\}$ by running policy $\pi_k = \pi(\theta_k)$ in the environment.
-        \STATE Compute rewards-to-go $\hat{R}_t$.
-        \STATE Compute advantage estimates, $\hat{A}_t$ (using any method of advantage estimation) based on the current value function $V_{\phi_k}$.
-        \STATE Estimate policy gradient as
-            \begin{equation*}
-            \hat{g}_k = \frac{1}{|{\mathcal D}_k|} \sum_{\tau \in {\mathcal D}_k} \sum_{t=0}^T \left. \nabla_{\theta} \log\pi_{\theta}(a_t|s_t)\right|_{\theta_k} \hat{A}_t.
-            \end{equation*}
-        \STATE Use the conjugate gradient algorithm to compute
-            \begin{equation*}
-            \hat{x}_k \approx \hat{H}_k^{-1} \hat{g}_k,
-            \end{equation*}
-            where $\hat{H}_k$ is the Hessian of the sample average KL-divergence.
-        \STATE Update the policy by backtracking line search with
-            \begin{equation*}
-            \theta_{k+1} = \theta_k + \alpha^j \sqrt{ \frac{2\delta}{\hat{x}_k^T \hat{H}_k \hat{x}_k}} \hat{x}_k,
-            \end{equation*}
-            where $j \in \{0, 1, 2, ... K\}$ is the smallest value which improves the sample loss and satisfies the sample KL-divergence constraint.
-        \STATE Fit value function by regression on mean-squared error:
-            \begin{equation*}
-            \phi_{k+1} = \arg \min_{\phi} \frac{1}{|{\mathcal D}_k| T} \sum_{\tau \in {\mathcal D}_k} \sum_{t=0}^T\left( V_{\phi} (s_t) - \hat{R}_t \right)^2,
-            \end{equation*}
-            typically via some gradient descent algorithm.
-        \ENDFOR
-    \end{algorithmic}
-    \end{algorithm}
+#. Input: initial policy parameters :math:`\theta_0`, initial value function parameters :math:`\phi_0`
+#. Hyperparameters: KL-divergence limit :math:`\delta`, backtracking coefficient :math:`\alpha`, maximum number of backtracking steps :math:`K`
+#. **for** :math:`k = 0,1,2,...` **do**
+#.     Collect set of trajectories :math:`{\mathcal D}_k = \{\tau_i\}` by running policy :math:`\pi_k = \pi(\theta_k)` in the environment.
+#.     Compute rewards-to-go :math:`\hat{R}_t`.
+#.     Compute advantage estimates, :math:`\hat{A}_t` (using any method of advantage estimation) based on the current value function :math:`V_{\phi_k}`.
+#.     Estimate policy gradient as
+
+       .. math::
+           \hat{g}_k = \frac{1}{|{\mathcal D}_k|} \sum_{\tau \in {\mathcal D}_k} \sum_{t=0}^T \left. \nabla_{\theta} \log\pi_{\theta}(a_t|s_t)\right|_{\theta_k} \hat{A}_t.
+
+#.     Use the conjugate gradient algorithm to compute
+
+       .. math::
+           \hat{x}_k \approx \hat{H}_k^{-1} \hat{g}_k,
+
+       where :math:`\hat{H}_k` is the Hessian of the sample average KL-divergence.
+#.     Update the policy by backtracking line search with
+
+       .. math::
+           \theta_{k+1} = \theta_k + \alpha^j \sqrt{ \frac{2\delta}{\hat{x}_k^T \hat{H}_k \hat{x}_k}} \hat{x}_k,
+
+       where :math:`j \in \{0, 1, 2, ... K\}` is the smallest value which improves the sample loss and satisfies the sample KL-divergence constraint.
+#.     Fit value function by regression on mean-squared error:
+
+       .. math::
+           \phi_{k+1} = \arg \min_{\phi} \frac{1}{|{\mathcal D}_k| T} \sum_{\tau \in {\mathcal D}_k} \sum_{t=0}^T\left( V_{\phi} (s_t) - \hat{R}_t \right)^2,
+
+       typically via some gradient descent algorithm.
+#. **end for**
 
 
 

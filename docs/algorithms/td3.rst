@@ -88,52 +88,50 @@ Pseudocode
 ----------
 
 
-.. math::
-    :nowrap:
+**Pseudocode**
 
-    \begin{algorithm}[H]
-        \caption{Twin Delayed DDPG}
-        \label{alg1}
-    \begin{algorithmic}[1]
-        \STATE Input: initial policy parameters $\theta$, Q-function parameters $\phi_1$, $\phi_2$, empty replay buffer $\mathcal{D}$
-        \STATE Set target parameters equal to main parameters $\theta_{\text{targ}} \leftarrow \theta$, $\phi_{\text{targ},1} \leftarrow \phi_1$, $\phi_{\text{targ},2} \leftarrow \phi_2$
-        \REPEAT
-            \STATE Observe state $s$ and select action $a = \text{clip}(\mu_{\theta}(s) + \epsilon, a_{Low}, a_{High})$, where $\epsilon \sim \mathcal{N}$
-            \STATE Execute $a$ in the environment
-            \STATE Observe next state $s'$, reward $r$, and done signal $d$ to indicate whether $s'$ is terminal
-            \STATE Store $(s,a,r,s',d)$ in replay buffer $\mathcal{D}$
-            \STATE If $s'$ is terminal, reset environment state.
-            \IF{it's time to update}
-                \FOR{$j$ in range(however many updates)}
-                    \STATE Randomly sample a batch of transitions, $B = \{ (s,a,r,s',d) \}$ from $\mathcal{D}$
-                    \STATE Compute target actions
-                    \begin{equation*}
-                        a'(s') = \text{clip}\left(\mu_{\theta_{\text{targ}}}(s') + \text{clip}(\epsilon,-c,c), a_{Low}, a_{High}\right), \;\;\;\;\; \epsilon \sim \mathcal{N}(0, \sigma)
-                    \end{equation*}
-                    \STATE Compute targets
-                    \begin{equation*}
-                        y(r,s',d) = r + \gamma (1-d) \min_{i=1,2} Q_{\phi_{\text{targ},i}}(s', a'(s'))
-                    \end{equation*}
-                    \STATE Update Q-functions by one step of gradient descent using
-                    \begin{align*}
-                        & \nabla_{\phi_i} \frac{1}{|B|}\sum_{(s,a,r,s',d) \in B} \left( Q_{\phi_i}(s,a) - y(r,s',d) \right)^2 && \text{for } i=1,2
-                    \end{align*}
-                    \IF{ $j \mod$ \texttt{policy\_delay} $ = 0$}
-                        \STATE Update policy by one step of gradient ascent using
-                        \begin{equation*}
-                            \nabla_{\theta} \frac{1}{|B|}\sum_{s \in B}Q_{\phi_1}(s, \mu_{\theta}(s))
-                        \end{equation*}
-                        \STATE Update target networks with
-                        \begin{align*}
-                            \phi_{\text{targ},i} &\leftarrow \rho \phi_{\text{targ}, i} + (1-\rho) \phi_i && \text{for } i=1,2\\
-                            \theta_{\text{targ}} &\leftarrow \rho \theta_{\text{targ}} + (1-\rho) \theta
-                        \end{align*}
-                    \ENDIF
-                \ENDFOR
-            \ENDIF
-        \UNTIL{convergence}
-    \end{algorithmic}
-    \end{algorithm}
+#. Input: initial policy parameters :math:`\theta`, Q-function parameters :math:`\phi_1`, :math:`\phi_2`, empty replay buffer :math:`\mathcal{D}`
+#. Set target parameters equal to main parameters :math:`\theta_{\text{targ}} \leftarrow \theta`, :math:`\phi_{\text{targ},1} \leftarrow \phi_1`, :math:`\phi_{\text{targ},2} \leftarrow \phi_2`
+#. **repeat**
+#.     Observe state :math:`s` and select action :math:`a = \text{clip}(\mu_{\theta}(s) + \epsilon, a_{Low}, a_{High})`, where :math:`\epsilon \sim \mathcal{N}`
+#.     Execute :math:`a` in the environment
+#.     Observe next state :math:`s'`, reward :math:`r`, and done signal :math:`d` to indicate whether :math:`s'` is terminal
+#.     Store :math:`(s,a,r,s',d)` in replay buffer :math:`\mathcal{D}`
+#.     If :math:`s'` is terminal, reset environment state.
+#.     **if** it's time to update **then**
+#.         **for** :math:`j` in range(however many updates) **do**
+#.             Randomly sample a batch of transitions, :math:`B = \{ (s,a,r,s',d) \}` from :math:`\mathcal{D}`
+#.             Compute target actions
+
+               .. math::
+                   a'(s') = \text{clip}\left(\mu_{\theta_{\text{targ}}}(s') + \text{clip}(\epsilon,-c,c), a_{Low}, a_{High}\right), \;\;\;\;\; \epsilon \sim \mathcal{N}(0, \sigma)
+
+#.             Compute targets
+
+               .. math::
+                   y(r,s',d) = r + \gamma (1-d) \min_{i=1,2} Q_{\phi_{\text{targ},i}}(s', a'(s'))
+
+#.             Update Q-functions by one step of gradient descent using
+
+               .. math::
+                   \nabla_{\phi_i} \frac{1}{|B|}\sum_{(s,a,r,s',d) \in B} \left( Q_{\phi_i}(s,a) - y(r,s',d) \right)^2 \qquad \text{for } i=1,2
+
+#.             **if** :math:`j \mod \texttt{policy\_delay} = 0` **then**
+#.                 Update policy by one step of gradient ascent using
+
+                   .. math::
+                       \nabla_{\theta} \frac{1}{|B|}\sum_{s \in B}Q_{\phi_1}(s, \mu_{\theta}(s))
+
+#.                 Update target networks with
+
+                   .. math::
+                       \phi_{\text{targ},i} \leftarrow \rho \phi_{\text{targ}, i} + (1-\rho) \phi_i \qquad \text{for } i=1,2 \\
+                       \theta_{\text{targ}} \leftarrow \rho \theta_{\text{targ}} + (1-\rho) \theta
+
+#.             **end if**
+#.         **end for**
+#.     **end if**
+#. **until** convergence
 
 
 Documentation

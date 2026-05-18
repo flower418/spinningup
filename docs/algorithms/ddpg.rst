@@ -128,46 +128,43 @@ At test time, to see how well the policy exploits what it has learned, we do not
 Pseudocode
 ----------
 
-.. math::
-    :nowrap:
+**Pseudocode**
 
-    \begin{algorithm}[H]
-        \caption{Deep Deterministic Policy Gradient}
-        \label{alg1}
-    \begin{algorithmic}[1]
-        \STATE Input: initial policy parameters $\theta$, Q-function parameters $\phi$, empty replay buffer $\mathcal{D}$
-        \STATE Set target parameters equal to main parameters $\theta_{\text{targ}} \leftarrow \theta$, $\phi_{\text{targ}} \leftarrow \phi$
-        \REPEAT
-            \STATE Observe state $s$ and select action $a = \text{clip}(\mu_{\theta}(s) + \epsilon, a_{Low}, a_{High})$, where $\epsilon \sim \mathcal{N}$
-            \STATE Execute $a$ in the environment
-            \STATE Observe next state $s'$, reward $r$, and done signal $d$ to indicate whether $s'$ is terminal
-            \STATE Store $(s,a,r,s',d)$ in replay buffer $\mathcal{D}$
-            \STATE If $s'$ is terminal, reset environment state.
-            \IF{it's time to update}
-                \FOR{however many updates}
-                    \STATE Randomly sample a batch of transitions, $B = \{ (s,a,r,s',d) \}$ from $\mathcal{D}$
-                    \STATE Compute targets
-                    \begin{equation*}
-                        y(r,s',d) = r + \gamma (1-d) Q_{\phi_{\text{targ}}}(s', \mu_{\theta_{\text{targ}}}(s'))
-                    \end{equation*}
-                    \STATE Update Q-function by one step of gradient descent using
-                    \begin{equation*}
-                        \nabla_{\phi} \frac{1}{|B|}\sum_{(s,a,r,s',d) \in B} \left( Q_{\phi}(s,a) - y(r,s',d) \right)^2
-                    \end{equation*}
-                    \STATE Update policy by one step of gradient ascent using
-                    \begin{equation*}
-                        \nabla_{\theta} \frac{1}{|B|}\sum_{s \in B}Q_{\phi}(s, \mu_{\theta}(s))
-                    \end{equation*}
-                    \STATE Update target networks with
-                    \begin{align*}
-                        \phi_{\text{targ}} &\leftarrow \rho \phi_{\text{targ}} + (1-\rho) \phi \\
-                        \theta_{\text{targ}} &\leftarrow \rho \theta_{\text{targ}} + (1-\rho) \theta
-                    \end{align*}
-                \ENDFOR
-            \ENDIF
-        \UNTIL{convergence}
-    \end{algorithmic}
-    \end{algorithm}
+#. Input: initial policy parameters :math:`\theta`, Q-function parameters :math:`\phi`, empty replay buffer :math:`\mathcal{D}`
+#. Set target parameters equal to main parameters :math:`\theta_{\text{targ}} \leftarrow \theta`, :math:`\phi_{\text{targ}} \leftarrow \phi`
+#. **repeat**
+#.     Observe state :math:`s` and select action :math:`a = \text{clip}(\mu_{\theta}(s) + \epsilon, a_{Low}, a_{High})`, where :math:`\epsilon \sim \mathcal{N}`
+#.     Execute :math:`a` in the environment
+#.     Observe next state :math:`s'`, reward :math:`r`, and done signal :math:`d` to indicate whether :math:`s'` is terminal
+#.     Store :math:`(s,a,r,s',d)` in replay buffer :math:`\mathcal{D}`
+#.     If :math:`s'` is terminal, reset environment state.
+#.     **if** it's time to update **then**
+#.         **for** however many updates **do**
+#.             Randomly sample a batch of transitions, :math:`B = \{ (s,a,r,s',d) \}` from :math:`\mathcal{D}`
+#.             Compute targets
+
+               .. math::
+                   y(r,s',d) = r + \gamma (1-d) Q_{\phi_{\text{targ}}}(s', \mu_{\theta_{\text{targ}}}(s'))
+
+#.             Update Q-function by one step of gradient descent using
+
+               .. math::
+                   \nabla_{\phi} \frac{1}{|B|}\sum_{(s,a,r,s',d) \in B} \left( Q_{\phi}(s,a) - y(r,s',d) \right)^2
+
+#.             Update policy by one step of gradient ascent using
+
+               .. math::
+                   \nabla_{\theta} \frac{1}{|B|}\sum_{s \in B}Q_{\phi}(s, \mu_{\theta}(s))
+
+#.             Update target networks with
+
+               .. math::
+                   \phi_{\text{targ}} \leftarrow \rho \phi_{\text{targ}} + (1-\rho) \phi \\
+                   \theta_{\text{targ}} \leftarrow \rho \theta_{\text{targ}} + (1-\rho) \theta
+
+#.         **end for**
+#.     **end if**
+#. **until** convergence
 
 
 Documentation
