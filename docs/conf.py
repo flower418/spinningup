@@ -65,16 +65,17 @@ source_parsers = {
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.imgmath',
+extensions = ['sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon']
 
-#'sphinx.ext.mathjax', ??
+# MathJax settings
+mathjax_path = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
 
-# imgmath settings
-imgmath_image_format = 'svg'
-imgmath_font_size = 14
+# imgmath settings (not used, kept for reference)
+# imgmath_image_format = 'svg'
+# imgmath_font_size = 14
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
