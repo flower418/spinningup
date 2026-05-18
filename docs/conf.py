@@ -72,6 +72,15 @@ extensions = ['sphinx.ext.mathjax',
 
 # MathJax settings
 mathjax_path = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+mathjax3_config = {
+    'tex': {
+        'macros': {
+            'E': '{\\mathrm{E}}',
+            'underE': ['\\underset{\\begin{subarray}{c}#1\\end{subarray}}{\\mathrm{E}}\\left[#2\\right]', 2],
+            'Epi': ['\\underset{\\begin{subarray}{c}\\tau\\sim\\pi\\end{subarray}}{\\mathrm{E}}\\left[#1\\right]', 1],
+        }
+    }
+}
 
 # imgmath settings (not used, kept for reference)
 # imgmath_image_format = 'svg'
