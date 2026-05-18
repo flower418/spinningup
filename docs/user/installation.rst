@@ -5,58 +5,42 @@ Installation
 
 .. contents:: Table of Contents
 
-Spinning Up requires Python3, OpenAI Gym, and OpenMPI. 
+Spinning Up requires Python3, Gymnasium, PyTorch, and OpenMPI.
 
-Spinning Up is currently only supported on Linux and OSX. It may be possible to install on Windows, though this hasn't been extensively tested. [#]_ 
+Spinning Up is currently only supported on Linux and OSX. It may be possible to install on Windows (e.g. via WSL2), though this hasn't been extensively tested.
 
 .. admonition:: You Should Know
 
-    Many examples and benchmarks in Spinning Up refer to RL environments that use the `MuJoCo`_ physics engine. MuJoCo is a proprietary software that requires a license, which is free to trial and free for students, but otherwise is not free. As a result, installing it is optional, but because of its importance to the research community---it is the de facto standard for benchmarking deep RL algorithms in continuous control---it is preferred. 
+    This fork of Spinning Up uses **PyTorch** (not TensorFlow) and **Gymnasium** (not the old Gym). MuJoCo is now **completely free and open source** — no license required.
 
-    Don't worry if you decide not to install MuJoCo, though. You can definitely get started in RL by running RL algorithms on the `Classic Control`_ and `Box2d`_ environments in Gym, which are totally free to use.
+    Many examples and benchmarks use the `MuJoCo`_ physics engine. MuJoCo is the de facto standard for benchmarking deep RL algorithms in continuous control.
 
-.. [#] It looks like at least one person has figured out `a workaround for running on Windows`_. If you try another way and succeed, please let us know how you did it!
+    If you prefer not to install MuJoCo, you can still run RL algorithms on `Classic Control`_ and `Box2d`_ environments, which are free to use.
 
-.. _`Classic Control`: https://gym.openai.com/envs/#classic_control
-.. _`Box2d`: https://gym.openai.com/envs/#box2d
-.. _`MuJoCo`: http://www.mujoco.org/index.html
-.. _`a workaround for running on Windows`: https://github.com/openai/spinningup/issues/23
+.. _`Classic Control`: https://gymnasium.farama.org/environments/classic_control/
+.. _`Box2d`: https://gymnasium.farama.org/environments/box2d/
+.. _`MuJoCo`: https://mujoco.org/
+
 
 Installing Python
 =================
 
-We recommend installing Python through Anaconda. Anaconda is a library that includes Python and many useful packages for Python, as well as an environment manager called conda that makes package management simple.
-
-Follow `the installation instructions`_ for Anaconda here. Download and install Anaconda3 (at time of writing, `Anaconda3-5.3.0`_). Then create a conda Python 3.6 env for organizing packages used in Spinning Up:
+We recommend installing Python through Miniforge_ (a lightweight alternative to Anaconda). Create a conda environment with Python 3.10+:
 
 .. parsed-literal::
 
-    conda create -n spinningup python=3.6
-
-To use Python from the environment you just created, activate the environment with:
-
-.. parsed-literal::
-
+    conda create -n spinningup python=3.10
     conda activate spinningup
 
-.. admonition:: You Should Know
-
-    If you're new to python environments and package management, this stuff can quickly get confusing or overwhelming, and you'll probably hit some snags along the way. (Especially, you should expect problems like, "I just installed this thing, but it says it's not found when I try to use it!") You may want to read through some clean explanations about what package management is, why it's a good idea, and what commands you'll typically have to execute to correctly use it. 
-
-    `FreeCodeCamp`_ has a good explanation worth reading. There's a shorter description on `Towards Data Science`_ which is also helpful and informative. Finally, if you're an extremely patient person, you may want to read the (dry, but very informative) `documentation page from Conda`_.
-
-.. _`the installation instructions`: https://docs.continuum.io/anaconda/install/
-.. _`Anaconda3-5.3.0`: https://repo.anaconda.com/archive/
-.. _`FreeCodeCamp`: https://medium.freecodecamp.org/why-you-need-python-environments-and-how-to-manage-them-with-conda-85f155f4353c
-.. _`Towards Data Science`: https://towardsdatascience.com/environment-management-with-conda-python-2-3-b9961a8a5097
-.. _`documentation page from Conda`: https://conda.io/docs/user-guide/tasks/manage-environments.html
-.. _`this Github issue for Tensorflow`: https://github.com/tensorflow/tensorflow/issues/20444
+.. _Miniforge: https://github.com/conda-forge/miniforge
 
 
 Installing OpenMPI
 ==================
 
-Ubuntu 
+OpenMPI enables parallel training for on-policy algorithms (VPG, TRPO, PPO).
+
+Ubuntu
 ------
 
 .. parsed-literal::
@@ -66,7 +50,8 @@ Ubuntu
 
 Mac OS X
 --------
-Installation of system packages on Mac requires Homebrew_. With Homebrew installed, run the follwing:
+
+Installation of system packages on Mac requires Homebrew_. With Homebrew installed, run:
 
 .. parsed-literal::
 
@@ -74,66 +59,73 @@ Installation of system packages on Mac requires Homebrew_. With Homebrew install
 
 .. _Homebrew: https://brew.sh
 
+
 Installing Spinning Up
 ======================
 
 .. parsed-literal::
 
-    git clone https://github.com/openai/spinningup.git
+    git clone https://github.com/flower418/spinningup.git
     cd spinningup
     pip install -e .
 
+This installs Spinning Up with its core dependencies (Gymnasium, PyTorch, NumPy, etc.).
+
 .. admonition:: You Should Know
 
-    Spinning Up defaults to installing everything in Gym **except** the MuJoCo environments. In case you run into any trouble with the Gym installation, check out the `Gym`_ github page for help. If you want the MuJoCo environments, see the optional installation section below.
+    This fork is PyTorch-only. It does not require TensorFlow at all.
 
-.. _`Gym`: https://github.com/openai/gym
 
 Check Your Install
 ==================
 
-To see if you've successfully installed Spinning Up, try running PPO in the LunarLander-v2 environment with
+To verify installation, run PPO on a simple environment:
 
 .. parsed-literal::
 
-    python -m spinup.run ppo --hid "[32,32]" --env LunarLander-v2 --exp_name installtest --gamma 0.999
+    python -m spinup.run ppo --hid "[32,32]" --env LunarLander-v3 --exp_name installtest --gamma 0.999
 
-This might run for around 10 minutes, and you can leave it going in the background while you continue reading through documentation. This won't train the agent to completion, but will run it for long enough that you can see *some* learning progress when the results come in.
+This will train for about 10 minutes — enough to see some learning progress.
 
-After it finishes training, watch a video of the trained policy with
+After training, watch the trained policy:
 
 .. parsed-literal::
 
     python -m spinup.run test_policy data/installtest/installtest_s0
 
-And plot the results with
+And plot the results:
 
 .. parsed-literal::
 
     python -m spinup.run plot data/installtest/installtest_s0
 
 
-Installing MuJoCo (Optional)
-============================
+Installing MuJoCo (Recommended)
+===============================
 
-First, go to the `mujoco-py`_ github page. Follow the installation instructions in the README, which describe how to install the MuJoCo physics engine and the mujoco-py package (which allows the use of MuJoCo from Python). 
+MuJoCo has been **free and open source** (Apache 2.0) since 2021. No license required.
 
-.. admonition:: You Should Know
-
-    In order to use the MuJoCo simulator, you will need to get a `MuJoCo license`_. Free 30-day licenses are available to anyone, and free 1-year licenses are available to full-time students.
-
-Once you have installed MuJoCo, install the corresponding Gym environments with
+Install the modern MuJoCo Python bindings and Gymnasium MuJoCo environments:
 
 .. parsed-literal::
 
-    pip install gym[mujoco,robotics]
+    pip install mujoco "gymnasium[mujoco]"
 
-And then check that things are working by running PPO in the Walker2d-v2 environment with
+Verify MuJoCo works:
 
 .. parsed-literal::
 
-    python -m spinup.run ppo --hid "[32,32]" --env Walker2d-v2 --exp_name mujocotest
+    python -c "import mujoco; print(mujoco.__version__)"
+    python -c "import gymnasium; gymnasium.make('HalfCheetah-v4')"
 
+Then test by training PPO on a MuJoCo environment:
 
-.. _`mujoco-py`: https://github.com/openai/mujoco-py
-.. _`MuJoCo license`: https://www.roboti.us/license.html
+.. parsed-literal::
+
+    python -m spinup.run ppo --hid "[64,64]" --env HalfCheetah-v4 --exp_name mujocotest
+
+.. note::
+
+    MuJoCo environments in Gymnasium use version **v4** or **v5**. The old v2 environments require the deprecated ``mujoco-py`` package and are not supported.
+
+    Available MuJoCo environments: ``Ant-v4``, ``HalfCheetah-v4``, ``Hopper-v4``, ``Walker2d-v4``, ``Swimmer-v4``, ``Humanoid-v4``, ``HumanoidStandup-v4``, ``Pusher-v4``, ``Reacher-v4``, ``InvertedPendulum-v4``, ``InvertedDoublePendulum-v4``.

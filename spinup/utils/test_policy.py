@@ -63,6 +63,12 @@ def run_policy(env, get_action, max_ep_len=None, num_episodes=100, render=True):
         "page on Experiment Outputs for how to handle this situation."
 
     logger = EpochLogger()
+    if render:
+        import gymnasium
+        try:
+            env = gymnasium.wrappers.HumanRendering(env)
+        except Exception:
+            pass
     o, _ = env.reset()
     r, d, ep_ret, ep_len, n = 0, False, 0, 0, 0
     while n < num_episodes:
